@@ -19,13 +19,13 @@ This implementation has **strict** requirements due to dependencies on other lib
 ## Hardware
 
 * OS: Ubuntu 20.04
-* NVIDIA GPU with Compute Compatibility >= 75 and memory > 6GB (Tested with RTX 2080 Ti), CUDA 11.3 (might work with older version)
+* NVIDIA GPU with Compute Compatibility >= 75 and memory > 6GB (Tested with RTX 3090), CUDA 11.3 (might work with older version)
 * 32GB RAM (in order to load full size images)
 
 ## Software
 
-* Clone this repo by `git clone https://github.com/kwea123/ngp_pl`
-* Python>=3.8 (installation via [anaconda](https://www.anaconda.com/distribution/) is recommended, use `conda create -n ngp_pl python=3.8` to create a conda environment and activate it by `conda activate ngp_pl`)
+* Clone this repo by `git clone https://github.com/CrystalWlz/ngp_pcm`
+* Python>=3.8 (installation via [anaconda](https://www.anaconda.com/distribution/) is recommended, use `conda create -n ngp_pcm python=3.8` to create a conda environment and activate it by `conda activate ngp_pcm`)
 * Python libraries
     * Install pytorch by `conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch`
     * Install `torch-scatter` following their [instruction](https://github.com/rusty1s/pytorch_scatter#installation) 
@@ -37,7 +37,7 @@ This implementation has **strict** requirements due to dependencies on other lib
 
 * Cuda extension: Upgrade `pip` to >= 22.1 and run `pip install models/csrc/` (please run this each time you `pull` the code)
 * Bugs:
-    *  File "/data2_12t/wlz/anaconda3/envs/ngp_pl/lib/python3.8/site-packages/pytorch_lightning/callbacks/progress/rich_progress.py", line 20, in <module>from torchmetrics.utilities.imports import _compare_version,ImportError: cannot import name '_compare_version' from 'torchmetrics.utilities.imports' (/data2_12t/wlz/anaconda3/envs/ngp_pl/lib/python3.8/site-packages/torchmetrics/utilities/imports.py)只要把rich_progress.py里_compare_version改成compare_version
+    *  File "~/anaconda3/envs/ngp_pcm/lib/python3.8/site-packages/pytorch_lightning/callbacks/progress/rich_progress.py", line 20, in <module>from torchmetrics.utilities.imports import _compare_version,ImportError: cannot import name '_compare_version' from 'torchmetrics.utilities.imports' (~/anaconda3/envs/ngp_pl/lib/python3.8/site-packages/torchmetrics/utilities/imports.py)要把rich_progress.py里_compare_version改成compare_version
     * 
 # Supported Datasets
 
@@ -61,6 +61,10 @@ For custom data, run `colmap` and get a folder `sparse/0` under which there are 
 
 Download data from [here](http://www.cs.umd.edu/~mmeshry/projects/rtmv/). To convert the hdr images into ldr images for training, run `python misc/prepare_rtmv.py <path/to/RTMV>`, it will create `images/` folder under each scene folder, and will use these images to train (and test).
 
+5. OmniObject3D data
+
+Download data from [here](https://omniobject3d.github.io/). 
+
 # Training
 
 Quickstart: `python train.py --root_dir <path/to/lego> --exp_name Lego` 
@@ -68,6 +72,10 @@ Quickstart: `python train.py --root_dir <path/to/lego> --exp_name Lego`
 //`python train.py --root_dir /data2_12t/dataset/3D_Project/ --exp_name test --dataset_name colmap --num_gpus 2`
 
 It will train the Lego scene for 30k steps (each step with 8192 rays), and perform one testing at the end. The training process should finish within about 5 minutes (saving testing image is slow, add `--no_save_test` to disable). Testing PSNR will be shown at the end.
+
+OmniObject3D: `python large_train.py`
+
+It will train 5000 Omni Objects for 10k steps (each step with 8192 rays).
 
 More options can be found in [opt.py](opt.py).
 
@@ -77,7 +85,6 @@ For other public dataset training, please refer to the scripts under `benchmarki
 
 Use `test.ipynb` to generate images. Lego pretrained model is available [here](https://github.com/kwea123/ngp_pl/releases/tag/v1.0)
 
-GUI usage: run `python show_gui.py` followed by the **same** hyperparameters used in training (`dataset_name`, `root_dir`, etc) and **add the checkpoint path** with `--ckpt_path <path/to/.ckpt>`
 
 
 # Benchmarks
